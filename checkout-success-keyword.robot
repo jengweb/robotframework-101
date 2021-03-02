@@ -23,14 +23,14 @@ Checkout Dinner Set
 *** Keywords ***
 Get Product List
     [Arguments]    ${total}
-    ${productList}=   Get Request   ${toy_store}   /api/v1/product    headers=&{ACCEPT}
+    ${productList}=   GET On Session   ${toy_store}   /api/v1/product    headers=&{ACCEPT}
 
     Status Should Be  ${OK}   ${productList}
     Should Be Equal   ${productList.json()["total"]}   ${total}
 
 Get Product Detail
     [Arguments]    ${product_id}    ${product_name}    ${product_price}
-    ${productDetail}=    Get Request    ${toy_store}    /api/v1/product/2    headers=&{ACCEPT}
+    ${productDetail}=    GET On Session    ${toy_store}    /api/v1/product/2    headers=&{ACCEPT}
 
     Request Should Be Successful    ${productDetail}
     Should Be Equal    ${productDetail.json()["id"]}    ${product_id}
@@ -41,7 +41,7 @@ Order Product
     [Arguments]    ${product_id}    ${quantity}    ${total_price}
     ${order}=    Replace Variables    ${ORDER_TEMPLATE}
 
-    ${orderStatus}=    Post Request    ${toy_store}    /api/v1/order    json=${order}    headers=&{POST_HEADERS}
+    ${orderStatus}=    POST On Session    ${toy_store}    /api/v1/order    json=${order}    headers=&{POST_HEADERS}
 
     Request Should Be Successful    ${orderStatus}
     Should Be Equal    ${orderStatus.json()["total_price"]}    ${total_price}
@@ -51,7 +51,7 @@ Confirm Payment
     [Arguments]    ${total_price}
     ${confirmPayment}=    Replace Variables    ${CONFIRM_PAYMENT_TEMPLATE}
 
-    ${confirmPaymentStatus}=     Post Request    ${toy_store}    /api/v1/confirmPayment    json=${confirmPayment}    headers=&{POST_HEADERS}
+    ${confirmPaymentStatus}=     POST On Session    ${toy_store}    /api/v1/confirmPayment    json=${confirmPayment}    headers=&{POST_HEADERS}
 
     Request Should Be Successful    ${confirmPaymentStatus}
     Should Match Regexp    ${confirmPaymentStatus.json()["notify_message"]}    \\d{1,2}/\\d{1,2}/\\d{4} \\d{2}:\\d{2}:\\d{2}
